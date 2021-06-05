@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import atexit
-from apscheduler.scheduler import Scheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 import flask
 from suggestions import *
@@ -22,16 +22,16 @@ app = flask.Flask(__name__)
 app.config['DEBUG'] = True
 
 
-cron = Scheduler(daemon=True)
-# Explicitly kick off the background thread
-cron.start()
 
-@cron.interval_schedule(days=1)
 def refresh_top100():
     print("updating billboard top 100")
     global rating_top100
     rating_top100 = scraping_Billboard()
     print("successfully updated billboard top 100")
+    
+sched = BlockingScheduler()
+sched.add_job(refresh_top100, 'cron', day_of_week='wed', hour=6, jitter=120)
+sched.start()
 
 
 # This API returns our main HTML page
@@ -79,8 +79,7 @@ def suggest_song():
                                suggestion=recommendation_from_outside,
                                suggestion_text=text2)
 
-# Shutdown your cron thread if the web process is stopped
-atexit.register(lambda: cron.shutdown(wait=False))
+
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
