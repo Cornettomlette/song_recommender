@@ -15,7 +15,7 @@ import sklearn
 import logging as log
 
 # Configure log level
-#log.basicConfig(level=log.DEBUG)
+log.basicConfig(level=log.INFO)
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= Client_ID,
                                                            client_secret= Client_Secret))

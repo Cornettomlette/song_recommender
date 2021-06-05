@@ -16,7 +16,7 @@ from flask import request
 import logging as log
 
 # Configure log level
-# log.basicConfig(level=log.DEBUG)
+log.basicConfig(level=log.INFO)
 
 # Initialize web server
 
