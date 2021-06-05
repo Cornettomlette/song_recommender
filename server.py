@@ -11,6 +11,11 @@ from suggestions import *
 from flask import render_template
 from flask import request
 
+import logging as log
+
+# Configure log level
+log.basicConfig(level=log.DEBUG)
+
 # Initialize web server
 
 app = flask.Flask(__name__)
@@ -41,9 +46,9 @@ def home():
 @app.route('/suggestions', methods=['GET'])
 def suggest_song():
     song = request.args.get('song')
-    if song == '':
-        return ''
-
+    
+    log.info(f"getting suggestions for {song}")
+    
     get_song = song.lower()
     global rating_top100
     list_of_ratios = []
@@ -51,9 +56,11 @@ def suggest_song():
         song_from_top = rating_top100['song'].values[i]
         ratio = lev.ratio(song_from_top, get_song)
         list_of_ratios.append(ratio)
+        log.debug(f"similarity ratio with {song_from_top} - {ratio:.2}")
     if max(list_of_ratios) > 0.9:
         index_of_song = list_of_ratios.index(max(list_of_ratios))
         real_song = rating_top100['song'].values[index_of_song]
+        log.info(f"{song} found in billboard top 100 as {real_song} with similarity ratio {max(list_of_ratios):.2}")
         recommendation = recomended_song(real_song)
         new_suggestion = recommendation[1]
         suggestion_rank = recommendation[2]
@@ -76,4 +83,4 @@ def suggest_song():
 atexit.register(lambda: cron.shutdown(wait=False))
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, use_reloader=False)

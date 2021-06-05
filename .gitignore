@@ -1,2 +1,4 @@
-credentialSpoty.py
-__pycache__/
+venv
+.ipynb_checkpoints
+.cache
+__pycache__

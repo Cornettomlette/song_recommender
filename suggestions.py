@@ -12,11 +12,16 @@ from credentialSpoty import *  #here you would need to create your own .py file 
 from fuzzywuzzy import fuzz
 import Levenshtein as lev
 import sklearn
+import logging as log
+
+# Configure log level
+log.basicConfig(level=log.DEBUG)
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id= Client_ID,
                                                            client_secret= Client_Secret))
 
 def load_model_from_file(file_name = 'clustering_model_4.sav'):
+    log.info("loading model")
     return joblib.load(open(file_name, 'rb'))
 
 model = load_model_from_file()
@@ -61,6 +66,7 @@ def recommend_song_from_kaggle_dataset(song_name):
 
 
 def scraping_Billboard(url = 'https://www.billboard.com/charts/hot-100'):
+    log.info("getting songs from billboard top 100")
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     title = []
@@ -79,8 +85,12 @@ def scraping_Billboard(url = 'https://www.billboard.com/charts/hot-100'):
 
     BillboardTop100['artist'] = a
     BillboardTop100['song'] = s
-    BillboardTop100.index += 1 
+    BillboardTop100.index += 1
+    log.debug(f"{BillboardTop100}")
+    log.info("retrieved fresh list of billboard top 100")
     return BillboardTop100
+    
+
 
 rating_top100 = scraping_Billboard()
 
@@ -89,12 +99,12 @@ def recomended_song(get_song):
     song_index = rating_top100.index[rating_top100['song'] == get_song].tolist()
     rec_index = random.randint(1,100)
     rec_song = rating_top100['Song'].values[rec_index]
-    #rec_index = rating_top100.index[rating_top100['Song'] == rec_song].tolist()
+    rec_index = rating_top100.index[rating_top100['Song'] == rec_song].tolist()
     rec_artist = rating_top100['Artist'].values[rec_index]
     
-    rec_song_artist_string = f"{rec_song}   by   {rec_artist}"
+    rec_song_artist_string = f"{rec_song}   by   {rec_artist[0]}"
     #print(f"So maybe you would also like the song '{rec_song}' by {rec_artist[0]}? (number {int(rec_index[0])} in Hot 100)")
-    return [song_index[0], rec_song_artist_string, rec_index]
+    return [song_index[0], rec_song_artist_string, int(rec_index[0])]
 
 
 # ACTUAL SUGGESTION GENERATING FUNCTION
