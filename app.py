@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
+
 import atexit
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -82,4 +84,5 @@ def suggest_song():
 
 
 if __name__ == '__main__':
-    app.run(use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, use_reloader=False)
