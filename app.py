@@ -14,7 +14,7 @@ from flask import request
 import logging as log
 
 # Configure log level
-log.basicConfig(level=log.DEBUG)
+# log.basicConfig(level=log.DEBUG)
 
 # Initialize web server
 
@@ -82,4 +82,4 @@ def suggest_song():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(use_reloader=False)
