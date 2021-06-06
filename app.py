@@ -80,9 +80,3 @@ def suggest_song():
         return render_template('suggestion.html',
                                suggestion=recommendation_from_outside,
                                suggestion_text=text2)
-
-
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, use_reloader=False)
