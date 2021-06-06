@@ -4,7 +4,7 @@
 import os
 
 import atexit
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import flask
 from suggestions import *
@@ -31,7 +31,7 @@ def refresh_top100():
     rating_top100 = scraping_Billboard()
     print("successfully updated billboard top 100")
     
-sched = BlockingScheduler()
+sched = BackgroundScheduler()
 sched.add_job(refresh_top100, 'cron', day_of_week='wed', hour=6, jitter=120)
 sched.start()
 
@@ -40,7 +40,7 @@ sched.start()
 
 @app.route('/', methods=['GET'])
 def home():
-    print("banana")
+    log.info("loading landing page")
     return render_template('index.html')
 
 
