@@ -40,6 +40,7 @@ sched.start()
 
 @app.route('/', methods=['GET'])
 def home():
+    print("banana")
     return render_template('index.html')
 
 
